@@ -16,6 +16,10 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+    <string>Your location is required for calculate ETA for you</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Your location is required for calculate ETA for you</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
