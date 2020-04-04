@@ -31,6 +31,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final _startPointController = TextEditingController();
   Tuple2 _location;
+  MapBoxPlace _place;
   @override
   Widget build(BuildContext context) {
     getCurrentUserLocation(_location);
@@ -38,33 +39,41 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text("TimMaiapp"),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        child: CustomTextField(
-          hintText: "Enter destination",
-          textController: _startPointController,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MapBoxAutoCompleteWidget(
-                  apiKey: DotEnv().env["map_box_token"],
-                  hint: "Enter destination",
-                  onSelect: (place) {
-                    print(place.center.elementAt(1));
-                    print(place.center.elementAt(0));
-                    print(place.toJson());
-                    _startPointController.text = place.placeName;
-                  },
-                  language: "pt",
-                  limit: 10,
-                  country: "BR",
-                ),
-              ),
-            );
-          },
-          enabled: true,
-        ),
+      body: Column(
+        children: <Widget>[
+          SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            child: CustomTextField(
+              hintText: "Enter destination",
+              textController: _startPointController,
+              onTap: () async {
+                var nav = Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MapBoxAutoCompleteWidget(
+                      apiKey: DotEnv().env["map_box_token"],
+                      hint: "Enter destination",
+                      onSelect: (place) {
+                        _place = place;
+                        print(place.center.elementAt(1));
+                        print(place.center.elementAt(0));
+                        print(place.toJson());
+                        _startPointController.text = place.placeName;
+                      },
+                      language: "pt",
+                      limit: 10,
+                      country: "BR",
+                    ),
+                  ),
+                );
+                if (await nav == null && _place != null) {
+                  print("calculate distance!");
+                }
+              },
+              enabled: true,
+            ),
+          ),
+        ],
       ),
     );
   }
