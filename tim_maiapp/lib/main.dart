@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_mapbox_autocomplete/flutter_mapbox_autocomplete.dart';
 import 'UserLocation.dart';
 import 'package:tuple/tuple.dart';
+import 'package:intl/intl.dart';
 
 Future main() async {
   await DotEnv().load('.env');
@@ -34,7 +35,7 @@ class _HomeState extends State<Home> {
   MapBoxPlace _place;
   @override
   Widget build(BuildContext context) {
-    getCurrentUserLocation(_location);
+    getCurrentUserLocation();
     return Scaffold(
       appBar: AppBar(
         title: Text("TimMaiapp"),
@@ -67,7 +68,11 @@ class _HomeState extends State<Home> {
                   ),
                 );
                 if (await nav == null && _place != null) {
-                  print("calculate distance!");
+                  DateTime now = DateTime.now();
+                  String formattedDate = DateFormat("yyyy-MM-dd" + "T" + "HH:mm:ss").format(now);
+                  Tuple2<String, String> _destination = new Tuple2(_place.center.elementAt(1).toString(), _place.center.elementAt(0).toString());
+                  String s = await UserLocation.getRoute(_location, _destination, formattedDate, DotEnv().env["here_maps_token"]);
+                  print(s);
                 }
               },
               enabled: true,
@@ -78,6 +83,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  getCurrentUserLocation(Tuple2 _location) async => _location = await UserLocation.getUserLatAndLong();
+  getCurrentUserLocation() async => _location = await UserLocation.getUserLatAndLong();
   
 }
