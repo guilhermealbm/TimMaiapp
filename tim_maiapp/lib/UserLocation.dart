@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:location/location.dart';
+import 'package:tim_maiapp/UserRoute.dart' as UserRoute;
 import 'package:tuple/tuple.dart';
 
 class UserLocation {
@@ -31,16 +32,18 @@ class UserLocation {
     return new Tuple2(_locationData.latitude.toString(), _locationData.longitude.toString());
   }
 
-  static Future<String> getRoute(Tuple2<String, String> origin, Tuple2<String, String> destination, String time, String apiKey) async {
+  static Future<UserRoute.UserRoute> getRoute(Tuple2<String, String> origin, Tuple2<String, String> destination, String time, String apiKey) async {
     try {
       Response response = await Dio().get("https://router.hereapi.com/v8/routes?transportMode=car&origin="+
         origin.item1+","+origin.item2+"&destination="+destination.item1+","+destination.item2+
         "&departureTime="+time+"&apiKey="+apiKey);
-      print(response.data.toString());
-      return response.data.toString();
+      if (response != null && response.statusCode == 200)
+        return UserRoute.UserRoute.fromJson(response.data);
+        
+      return null;
     } catch (e) {
       print(e);
-      return e.toString();
+      return null;
     }
   }
 

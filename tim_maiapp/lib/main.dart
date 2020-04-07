@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_mapbox_autocomplete/flutter_mapbox_autocomplete.dart';
+import 'package:tim_maiapp/UserRoute.dart';
 import 'UserLocation.dart';
 import 'package:tuple/tuple.dart';
 import 'package:intl/intl.dart';
@@ -71,8 +72,9 @@ class _HomeState extends State<Home> {
                   DateTime now = DateTime.now();
                   String formattedDate = DateFormat("yyyy-MM-dd" + "T" + "HH:mm:ss").format(now);
                   Tuple2<String, String> _destination = new Tuple2(_place.center.elementAt(1).toString(), _place.center.elementAt(0).toString());
-                  String s = await UserLocation.getRoute(_location, _destination, formattedDate, DotEnv().env["here_maps_token"]);
-                  print(s);
+                  UserRoute userRoute = await UserLocation.getRoute(_location, _destination, formattedDate, DotEnv().env["here_maps_token"]);
+                  Duration difference = DateTime.parse(userRoute.routes.elementAt(0).sections.elementAt(0).arrival.time.toString()).difference(now);
+                  print(difference.inSeconds);
                 }
               },
               enabled: true,
