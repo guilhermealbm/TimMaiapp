@@ -35,6 +35,7 @@ class _HomeState extends State<Home> {
   Tuple2 _location;
   MapBoxPlace _place;
   String _message = 'How many times can you hear "Ela Partiu" until you reach your destination? Enter your destination above and find out';
+  List<Widget> _widgetList = List<Widget>();
   
   @override
   Widget build(BuildContext context) {
@@ -43,12 +44,24 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text("TimMaiapp"),
       ),
-      body: Column(
-        children: <Widget>[
-          getDestinationTextField(),
-          Text("$_message")
-        ],
-      ),
+      body: 
+      Column(children: <Widget>[
+        Column(
+          children: <Widget>[
+            getDestinationTextField(),
+            Padding(
+              padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+              child: Text(
+                "$_message",
+                style: TextStyle(fontSize: 15),
+              ),
+            )
+          ],
+        ),
+        Column(
+          children: _widgetList,
+        )
+      ],)
     );
   }
 
