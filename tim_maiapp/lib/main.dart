@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_mapbox_autocomplete/flutter_mapbox_autocomplete.dart';
 import 'package:tim_maiapp/UserRoute.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'UserLocation.dart';
 import 'package:tuple/tuple.dart';
 import 'package:intl/intl.dart';
@@ -36,6 +37,14 @@ class _HomeState extends State<Home> {
   MapBoxPlace _place;
   String _message = 'How many times can you hear "Ela Partiu" until you reach your destination? Enter your destination above and find out';
   List<Widget> _widgetList = List<Widget>();
+
+  YoutubePlayerController _controller = YoutubePlayerController(
+    initialVideoId: 'syqJAgTQdlU',
+    flags: YoutubePlayerFlags(
+      autoPlay: true,
+      mute: false,
+    ),
+  );
   
   @override
   Widget build(BuildContext context) {
@@ -107,7 +116,22 @@ class _HomeState extends State<Home> {
     double division = difference.inSeconds/255;
     final repetitions = division.toStringAsFixed(division.truncateToDouble() == division ? 0 : 2);
     setState(() => _message = 'You can hear "Ela Partiu" $repetitions times! Everything is gonna be okay, bud');
+    addYoutubePlayer();
 
+  }
+
+  addYoutubePlayer() {
+    if(_widgetList.isEmpty) {
+      _widgetList.add(
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+          child: YoutubePlayer(
+            controller: _controller,
+            showVideoProgressIndicator: true,
+          ),
+        )
+      );
+    }
   }
   
 }

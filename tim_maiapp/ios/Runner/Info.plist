@@ -20,6 +20,8 @@
     <string>Your location is required for calculate ETA for you</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Your location is required for calculate ETA for you</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
