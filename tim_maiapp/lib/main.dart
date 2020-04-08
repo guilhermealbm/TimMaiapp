@@ -34,6 +34,8 @@ class _HomeState extends State<Home> {
   final _startPointController = TextEditingController();
   Tuple2 _location;
   MapBoxPlace _place;
+  String _message = 'How many times can you hear "Ela Partiu" until you reach your destination? Enter your destination above and find out';
+  
   @override
   Widget build(BuildContext context) {
     getCurrentUserLocation();
@@ -43,48 +45,56 @@ class _HomeState extends State<Home> {
       ),
       body: Column(
         children: <Widget>[
-          SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            child: CustomTextField(
-              hintText: "Enter destination",
-              textController: _startPointController,
-              onTap: () async {
-                var nav = Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MapBoxAutoCompleteWidget(
-                      apiKey: DotEnv().env["map_box_token"],
-                      hint: "Enter destination",
-                      onSelect: (place) {
-                        _place = place;
-                        print(place.center.elementAt(1));
-                        print(place.center.elementAt(0));
-                        print(place.toJson());
-                        _startPointController.text = place.placeName;
-                      },
-                      language: "pt",
-                      limit: 10,
-                      country: "BR",
-                    ),
-                  ),
-                );
-                if (await nav == null && _place != null) {
-                  DateTime now = DateTime.now();
-                  String formattedDate = DateFormat("yyyy-MM-dd" + "T" + "HH:mm:ss").format(now);
-                  Tuple2<String, String> _destination = new Tuple2(_place.center.elementAt(1).toString(), _place.center.elementAt(0).toString());
-                  UserRoute userRoute = await UserLocation.getRoute(_location, _destination, formattedDate, DotEnv().env["here_maps_token"]);
-                  Duration difference = DateTime.parse(userRoute.routes.elementAt(0).sections.elementAt(0).arrival.time.toString()).difference(now);
-                  print(difference.inSeconds);
-                }
-              },
-              enabled: true,
-            ),
-          ),
+          getDestinationTextField(),
+          Text("$_message")
         ],
       ),
     );
   }
 
+  Widget getDestinationTextField() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      child: CustomTextField(
+        hintText: "Enter destination",
+        textController: _startPointController,
+        onTap: () async {
+          var nav = Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MapBoxAutoCompleteWidget(
+                apiKey: DotEnv().env["map_box_token"],
+                hint: "Enter destination",
+                onSelect: (place) {
+                  _place = place;
+                  _startPointController.text = place.placeName;
+                },
+                language: "pt",
+                limit: 10,
+                country: "BR",
+              ),
+            ),
+          );
+          if (await nav == null && _place != null) 
+            getUserRouteInSeconds();
+        },
+        enabled: true,
+      ),
+    );
+  }
+
   getCurrentUserLocation() async => _location = await UserLocation.getUserLatAndLong();
+
+  getUserRouteInSeconds() async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat("yyyy-MM-dd" + "T" + "HH:mm:ss").format(now);
+    Tuple2<String, String> _destination = new Tuple2(_place.center.elementAt(1).toString(), _place.center.elementAt(0).toString());
+    UserRoute userRoute = await UserLocation.getRoute(_location, _destination, formattedDate, DotEnv().env["here_maps_token"]);
+    Duration difference = DateTime.parse(userRoute.routes.elementAt(0).sections.elementAt(0).arrival.time.toString()).difference(now);
+    double division = difference.inSeconds/255;
+    final repetitions = division.toStringAsFixed(division.truncateToDouble() == division ? 0 : 2);
+    setState(() => _message = 'You can hear "Ela Partiu" $repetitions times! Everything is gonna be okay, bud');
+
+  }
   
 }
