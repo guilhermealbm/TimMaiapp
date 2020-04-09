@@ -16,9 +16,10 @@ Otherwise, if you want to download the source code and modify it on your own com
 3. Open TimMaiapp folder in your work environment
 4. Create a `.env` file thats contains [map_box](https://docs.mapbox.com/) and [here_maps](https://developer.here.com/documentation) API's token
 
-
+```
 map_box_token = "your_token_here"
 here_maps_token = "your_token_here"
+```
 
 5. Run and Enjoy
 
